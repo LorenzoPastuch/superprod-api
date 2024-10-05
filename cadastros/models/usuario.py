@@ -13,7 +13,7 @@ class Perfil(models.Model):
         return self.usuario.username
 
 class UsuarioEmpresa(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, primary_key=True)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     empresapadrao = models.BooleanField(default=False)
 

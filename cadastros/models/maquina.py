@@ -10,3 +10,10 @@ class Maquina(models.Model):
 
     def __str__(self):
         return self.nome
+    
+class MoldeMaquina(models.Model):
+    maquina = models.ForeignKey('Maquina', on_delete=models.CASCADE)
+    molde = models.ForeignKey('Molde', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.molde.nome + ' - ' + self.maquina.nome
