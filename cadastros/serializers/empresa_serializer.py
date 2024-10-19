@@ -14,4 +14,4 @@ class EmpresaCreateSerializer(serializers.ModelSerializer):
 class EmpresaUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Empresa
-        exclude = ['id', 'cpfoucnpj']
+        exclude = ['id', 'cnpj']

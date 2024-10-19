@@ -16,8 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from seguranca.token_views import CustomTokenObtainPairView, TokenRevokeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('cadastros.urls')),
+    path('oauth/token', CustomTokenObtainPairView.as_view(), name='custom_token_obtain_pair'),
+    path('tokens/revoke', TokenRevokeView.as_view(), name='token_revoke'),
 ]
