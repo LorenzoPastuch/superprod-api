@@ -2,22 +2,11 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from ..models.empresa import Empresa
-from ..serializers.empresa_serializer import EmpresaSerializer, EmpresaCreateSerializer, EmpresaUpdateSerializer
+from ..serializers.empresa_serializer import EmpresaSerializer
 
 class EmpresaViewSet(viewsets.ModelViewSet):
     queryset = Empresa.objects.all()
     serializer_class = EmpresaSerializer
-
-    def get_serializer_class(self):
-        if self.action == 'create' or self.action == 'novo':
-            return EmpresaCreateSerializer
-        elif self.action in ['update', 'partial_update']:
-            return EmpresaUpdateSerializer
-        return self.serializer_class
-
-    @action(detail=False, methods=['post'], url_path='novo')
-    def novo(self, request):
-        return self.create(request)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

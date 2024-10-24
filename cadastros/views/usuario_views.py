@@ -3,10 +3,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from ..models.usuario import Perfil, UsuarioEmpresa
-from ..serializers.usuario_serializer import PermissoesSerializer, UsuarioCreateSerializer, UsuarioListSerializer
+from ..serializers.usuario_serializer import UsuarioCreateSerializer, UsuarioListSerializer
 from ..models.empresa import Empresa
 from django.contrib.auth.models import Permission
-from django.db import transaction
 
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -66,22 +65,60 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    # @action(detail=False, methods=['get'], url_path='empresas/ativa')
-    # def empresas_ativas(self, request):
-    #     user = request.user
-    #     perfil = Perfil.objects.filter(usuario=user).first()
-        
-    #     if perfil and perfil.empresaativa:
-    #         return Response({'empresaativa': perfil.empresaativa}, status=status.HTTP_200_OK)
-        
-    #     return Response({'error': 'No active company found'}, status=status.HTTP_404_NOT_FOUND)
+    def update(self, request, pk):
 
-    @action(detail=False, methods=['get'], url_path='permissoes')
-    def permissoes(self, request):
-        permissoes = Permission.objects.all()
-        serializer = PermissoesSerializer(permissoes, many=True)
+        try:
+           user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         
-        return Response(serializer.data)
+        username = request.data.get('username')
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+        status_user = request.data.get('status')
+        empresaativa = request.data.get('empresaativa')
+        empresapadrao = request.data.get('empresapadrao')
+        empresas = request.data.get('empresas', [])
+        permissoes = request.data.get('permissoes',[])
+
+
+        user.username = username
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        
+        perfil = user.perfil
+        perfil.status = status_user
+        perfil.empresaativa = empresaativa
+        perfil.save()
+
+        user.usuarioempresa_set.all().delete()  # Remove as empresas existentes
+        for empresa_data in empresas:
+            empresa_id = empresa_data.get('id')
+            try:
+                empresa = Empresa.objects.get(id=empresa_id)
+            except Empresa.DoesNotExist:
+                return Response({'error': f'Empresa with id {empresa_id} does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
+            UsuarioEmpresa.objects.create(
+                usuario=user,
+                empresa=empresa,
+                empresapadrao=empresapadrao
+            )
+
+        # Atualiza as permissões do usuário
+        user.user_permissions.clear()  # Limpa permissões existentes
+        for permissao in permissoes:
+            codename = permissao.get('codename')
+            try:
+                permissao = Permission.objects.get(codename=codename)
+                print(permissao)
+                user.user_permissions.add(permissao)
+            except Permission.DoesNotExist:
+                return Response({'error': 'One or more permissions do not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)    
     
     @action(detail=True, methods=['put'], url_path='atualizar-empresa-ativa')
     def empresaativa(self, request, pk=None):
@@ -109,34 +146,32 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    @action(detail=True, methods=['put'], url_path='reset')
+    def reset_senha(self, request, pk=None):
+        try:
+           user = self.get_object()
+           user.set_password('123456')
+           user.save()
+           return Response({'success': 'Senha resetada com sucesso.'}, status=status.HTTP_200_OK)
+        
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+    @action(detail=True, methods=['put'], url_path='alterar-senha')
+    def alterar_senha(self, request, pk=None):
+        nova_senha = request.data.get('nova_senha')
+        user = self.get_object()
+        user.set_password(nova_senha)
+        user.save()
+        return Response({'success': 'Senha alterada com sucesso.'}, status=status.HTTP_200_OK)
+        
 
 
-    # def retrieve(self, request, pk=None):
-    #     user = self.get_object()
-    #     perfil = Perfil.objects.filter(usuario=user).first()
-    #     empresa = Empresa.objects.filter(id=perfil.empresaativa).first()
-    #     permissoes = user.get_all_permissions()
-    #     permissoes_formatadas = []
 
-    #     for perm in permissoes:
-    #         codename = perm.split('.')
-    #         permission_obj = Permission.objects.get(codename=codename[1])  # Obtém o objeto Permission
-    #         permissoes_formatadas.append({
-    #             "id": permission_obj.id,  # Usa o ID real da permissão
-    #             "descricao": permission_obj.codename  # Usa o nome da permissão como descrição
-    #         })
+    
 
-    #     response_data = {
-    #         "id": user.id,
-    #         "status": perfil.status if perfil else None,
-    #         "nome": f"{user.first_name} {user.last_name}",
-    #         "login": user.username,
-    #         "empresaativa": empresa.razaosocial,
-    #         "idEmpresaativa": perfil.empresaativa,
-    #         "permissoes": list(permissoes_formatadas)
-    #     }
 
-    #     return Response(response_data, status=status.HTTP_200_OK)
     
     
         

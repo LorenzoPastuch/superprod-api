@@ -3,7 +3,6 @@ from django.contrib.auth.models import User, Permission
 
 from ..serializers.empresa_serializer import EmpresaSerializer
 from ..models.usuario import Perfil, UsuarioEmpresa
-from ..models.empresa import Empresa
 
 class UsuarioListSerializer(serializers.ModelSerializer):
     nome = serializers.SerializerMethodField()
@@ -24,7 +23,6 @@ class UsuarioListSerializer(serializers.ModelSerializer):
         return obj.perfil.status
     
 class UsuarioEmpresaSerializer(serializers.ModelSerializer):
-    # empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())
     empresa = EmpresaSerializer()
 
     class Meta:
@@ -80,7 +78,7 @@ class UsuarioCreateSerializer(serializers.ModelSerializer):
         return user
     
     def get_permissoes(self, obj):
-        permissoes = obj.user_permissions.all()  # Pega todas as permissões associadas ao usuário
+        permissoes = obj.user_permissions.all()
         return PermissoesSerializer(permissoes, many=True).data
     
     def get_status(self, obj):

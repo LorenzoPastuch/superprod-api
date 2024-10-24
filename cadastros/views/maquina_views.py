@@ -6,29 +6,31 @@ from django.db import transaction
 from cadastros.models.maquina import Maquina, MoldeMaquina
 from cadastros.models.molde import Molde
 from cadastros.serializers.maquina_serializer import MaquinaSerializer
+from cadastros.models.usuario import Perfil
 
 class MaquinaViewSet(viewsets.ModelViewSet):
     queryset = Maquina.objects.all()
     serializer_class = MaquinaSerializer
 
-    @action(detail=False, methods=['post'])
-    @transaction.atomic
-    def register(self, request):
-        maquina = request.data.get('maquina')
-        moldes = request.data.get('moldes',[])
+    def get_serializer_context(self):
+        return {'request': self.request}
+    
+    @action(detail=False, methods=['get'], url_path='ativos')
+    def listar_ativos(self, request):
+        user = request.user
+        perfil = Perfil.objects.get(usuario=user)
+        empresa_ativa = perfil.empresaativa
 
-        maquina = Maquina.objects.create(**maquina)
+        maquinas_ativos = Maquina.objects.filter(status=True, empresa=empresa_ativa)
+        serializer =MaquinaSerializer(maquinas_ativos, many=True, context={'request': request})
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'], url_path='inativos')
+    def listar_inativos(self, request):
+        user = request.user
+        perfil = Perfil.objects.get(usuario=user)
+        empresa_ativa = perfil.empresaativa
 
-        for molde in moldes:
-            molde_id = molde.get('molde')
-            try:
-                molde = Molde.objects.get(id=molde_id)
-            except Molde.DoesNotExist:
-                return Response({'error': f'Molde with id {molde_id} does not exist'}, status=status.HTTP_400_BAD_REQUEST)
-
-            MoldeMaquina.objects.create(
-                molde=molde, 
-                maquina=maquina
-            )
-
-        return Response(status=status.HTTP_201_CREATED)
+        maquinas_inativos = Maquina.objects.filter(status=False, empresa=empresa_ativa)
+        serializer = MaquinaSerializer(maquinas_inativos, many=True, context={'request': request})
+        return Response(serializer.data)
