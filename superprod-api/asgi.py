@@ -1,5 +1,5 @@
 """
-ASGI config for super_prod_api project.
+ASGI config for superprod-api project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'super_prod_api.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'superprod-api.settings')
 
 application = get_asgi_application()
