@@ -26,7 +26,10 @@ SECRET_KEY = 'django-insecure-$&djva4%v94@(1u#yrv!lq#$g^oto*dya%xe_&u)ez@@kc2luw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "http://localhost:4200",
+    "192.168.90.80",
+]
 
 # Application definition
 
@@ -77,6 +80,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
+    "http://192.168.90.80:4200",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -109,9 +113,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'superprod',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '127.0.0.1',
+        'USER': 'admin',
+        'PASSWORD': 'admin',
+        'HOST': '192.168.90.80',
         'PORT': '3306',
     }
 }
