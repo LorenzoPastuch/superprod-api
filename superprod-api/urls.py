@@ -21,7 +21,8 @@ from apis_externas.cnpj_views import CnpjViewSet
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('cadastros.urls')),
+    path('cadastro/', include('cadastros.urls')),
+    path('pcp/', include('pcp.urls')),
     path('oauth/token', CustomTokenObtainPairView.as_view(), name='custom_token_obtain_pair'),
     path('tokens/revoke', TokenRevokeView.as_view(), name='token_revoke'),
     path('cnpj/<str:cnpj>', CnpjViewSet.as_view(), name='cnpj'),

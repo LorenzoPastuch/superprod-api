@@ -68,7 +68,7 @@ class MaquinaSerializer(LogCadastroMixin, serializers.ModelSerializer):
             MoldeMaquina.objects.create(maquina=instance, molde=molde_instance)
 
         self.registrar_log(
-            comando=f"Alterar Maquina de ID {instance.id}",
+            comando=f"Editar Maquina de ID {instance.id}",
             usuario=user,
             instance=instance,
         )

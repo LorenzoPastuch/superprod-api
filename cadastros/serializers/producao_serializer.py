@@ -76,6 +76,57 @@ class ProducaoSerializer(LogCadastroMixin, serializers.ModelSerializer):
             instance=producao,
         )
         return producao
+    
+    def update(self, instance, validated_data):
+        request = self.context.get('request')
+        user = request.user
+
+        perfil = Perfil.objects.get(usuario=user)
+        id_empresa_ativa = perfil.empresaativa
+        empresa_ativa = Empresa.objects.get(id=id_empresa_ativa)
+
+        data = self.context['request'].data.get('data', instance.data)
+        operador = self.context['request'].data.get('operador', {}).get('id', instance.operador.id)
+        embalador = self.context['request'].data.get('embalador', {}).get('id', instance.embalador.id)
+        produto = self.context['request'].data.get('produto', {}).get('id', instance.produto.id)
+        maquina = self.context['request'].data.get('maquina', {}).get('id', instance.maquina.id)
+        atributo = self.context['request'].data.get('atributo', {}).get('id', instance.atributo.id)
+        quantidade = self.context['request'].data.get('quantidade', instance.quantidade)
+        horainicial = self.context['request'].data.get('horainicial', instance.horainicial)
+        horafinal = self.context['request'].data.get('horafinal', instance.horafinal)
+        perda = self.context['request'].data.get('perda', instance.perda)
+        motivoperda = self.context['request'].data.get('motivoperda', instance.motivoperda)
+        ciclo = self.context['request'].data.get('ciclo', instance.ciclo)
+        lote = self.context['request'].data.get('lote', instance.lote)
+        observacao = self.context['request'].data.get('observacao', instance.observacao)
+        status = self.context['request'].data.get('status', instance.status)
+
+        # Atualiza os campos do objeto 'instance'
+        instance.empresa = empresa_ativa
+        instance.operador = Colaborador.objects.get(id=operador)
+        instance.embalador = Colaborador.objects.get(id=embalador)
+        instance.produto = Produto.objects.get(id=produto)
+        instance.maquina = Maquina.objects.get(id=maquina)
+        instance.atributo = Atributo.objects.get(id=atributo)
+        instance.quantidade = quantidade
+        instance.data = data
+        instance.horainicial = horainicial
+        instance.horafinal = horafinal
+        instance.perda = perda
+        instance.motivoperda = motivoperda
+        instance.ciclo = ciclo
+        instance.lote = lote
+        instance.observacao = observacao
+        instance.status = status
+
+        instance.save()
+
+        self.registrar_log(
+            comando=f"Atualizar Produção de ID {instance.id}",
+            usuario=user,
+            instance=instance,
+        )
+        return instance
 
     def get_operador(self, obj):
         return ColaboradorSerializer(obj.operador).data

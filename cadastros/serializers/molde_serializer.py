@@ -38,6 +38,38 @@ class MoldeSerializer(LogCadastroMixin, serializers.ModelSerializer):
         )
         return molde
     
+    def update(self, instance, validated_data):
+        request = self.context.get('request')
+        user = request.user
+
+        perfil = Perfil.objects.get(usuario=user)
+        id_empresa_ativa = perfil.empresaativa
+        empresa_ativa = Empresa.objects.get(id=id_empresa_ativa)
+        
+        produto = self.context['request'].data.get('produto', {}).get('id', instance.produto.id)
+        nome = self.context['request'].data.get('nome', instance.nome)
+        fabricante = self.context['request'].data.get('fabricante', instance.fabricante)
+        cavidades = self.context['request'].data.get('cavidades', instance.cavidades)
+        ciclo = self.context['request'].data.get('ciclo', instance.ciclo)
+        status = self.context['request'].data.get('status', instance.status)
+
+        instance.empresa = empresa_ativa
+        instance.nome = nome
+        instance.fabricante = fabricante
+        instance.cavidades = cavidades
+        instance.ciclo = ciclo
+        instance.status = status
+        instance.produto = Produto.objects.get(id=produto)
+
+        instance.save()
+
+        self.registrar_log(
+            comando=f"Editar Molde de ID {instance.id}",
+            usuario=user,
+            instance=instance,
+        )
+        return instance
+    
     def get_produto(self, obj):
         produto = obj.produto
         return ProdutoSerializer(produto).data
