@@ -11,7 +11,7 @@ class ProducaoPcp(models.Model):
     ]
     atributo = models.ForeignKey(Atributo, on_delete=models.CASCADE)
     quantidade = models.IntegerField()
-    # caixas = models.IntegerField()
+    caixas = models.IntegerField()
     ordem = models.IntegerField()
     status = models.CharField(max_length=100, choices=STATUS)
     maquina = models.ForeignKey(MaquinaPcp, on_delete=models.CASCADE)

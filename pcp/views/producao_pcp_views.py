@@ -20,6 +20,6 @@ class ProducaoPcpViewSet(viewsets.ModelViewSet):
         perfil = Perfil.objects.get(usuario=user)
         empresa_ativa = perfil.empresaativa
 
-        producoes_pcp = ProducaoPcp.objects.filter(maquina=pk, empresa=empresa_ativa)
+        producoes_pcp = ProducaoPcp.objects.filter(maquina=pk, empresa=empresa_ativa).order_by('ordem')
         serializer = ProducaoPcpSerializer(producoes_pcp, many=True, context={'request': request})
         return Response(serializer.data)
