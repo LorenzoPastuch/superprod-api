@@ -9,11 +9,18 @@ class ProducaoPcp(models.Model):
         ('EM PRODUÇÃO', 'EM PRODUÇÃO'),
         ('FINALIZADA', 'FINALIZADA')
     ]
+
     atributo = models.ForeignKey(Atributo, on_delete=models.CASCADE)
     quantidade = models.IntegerField()
-    caixas = models.IntegerField()
     ordem = models.IntegerField()
     status = models.CharField(max_length=100, choices=STATUS)
     maquina = models.ForeignKey(MaquinaPcp, on_delete=models.CASCADE)
+
+    caixas = models.IntegerField()
+    # pigmento = models.FloatField()
+    
+    horainicial = models.DateTimeField(null=True, blank=True)
+    horafinal =models.DateTimeField(null=True, blank=True)
+
 
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
