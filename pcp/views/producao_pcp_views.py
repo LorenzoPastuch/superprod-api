@@ -23,3 +23,4 @@ class ProducaoPcpViewSet(viewsets.ModelViewSet):
         producoes_pcp = ProducaoPcp.objects.filter(maquina=pk, empresa=empresa_ativa).order_by('ordem')
         serializer = ProducaoPcpSerializer(producoes_pcp, many=True, context={'request': request})
         return Response(serializer.data)
+    
