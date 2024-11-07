@@ -18,7 +18,8 @@ class InsumosPcpViewSet(viewsets.ViewSet):
         ).values(
             'producao__maquina__id', 
             'producao__maquina__produto__nome', 
-            'producao__maquina__produto__material'
+            'producao__maquina__produto__material',
+            'producao__maquina__produto__embalagem'
         ).annotate(
             total_caixas=Sum('caixas'),
             total_qnt_material=Sum('qnt_material'),
@@ -37,6 +38,7 @@ class InsumosPcpViewSet(viewsets.ViewSet):
             if maquina_id not in maquinas_resultados:
                 maquinas_resultados[maquina_id] = {
                     'tipo_material': insumo['producao__maquina__produto__material'],
+                    'tipo_embalagem': insumo['producao__maquina__produto__embalagem'],
                     'produto': insumo['producao__maquina__produto__nome'],
                     'maquina': maquina_id,
                     'total_caixas': insumo['total_caixas'],

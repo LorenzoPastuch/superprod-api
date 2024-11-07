@@ -15,7 +15,7 @@ class MaquinaPcpSerializer(serializers.ModelSerializer):
     produto = serializers.SerializerMethodField()
     class Meta:
         model = MaquinaPcp
-        fields = ['id', 'atributo', 'produto', 'status', 'maquina']
+        fields = ['id', 'atributo', 'produto', 'status', 'prioridade', 'maquina']
 
     # def create(self, validate_data):
     #     request = self.context.get('request')
@@ -50,12 +50,14 @@ class MaquinaPcpSerializer(serializers.ModelSerializer):
 
         produto = self.context['request'].data.get('produto', {}).get('id', instance.produto.id)
         status = self.context['request'].data.get('status', instance.status)
+        prioridade = self.context['request'].data.get('prioridade', instance.prioridade)
         maquina = self.context['request'].data.get('maquina', instance.maquina)
 
         instance.empresa = empresa_ativa
         instance.produto = Produto.objects.get(id=produto)
         instance.maquina = Maquina.objects.get(id=maquina)
         instance.status = status
+        instance.prioridade = prioridade
 
         instance.save()
         return instance
