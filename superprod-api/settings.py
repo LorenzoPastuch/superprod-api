@@ -90,7 +90,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://192.168.90.80:4200",
 ]
 
-CORS_ALLOW_CREDENTIALS = False
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'superprod-api.urls'
 
@@ -116,27 +116,27 @@ WSGI_APPLICATION = 'superprod-api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'superprod',
-#         'USER': 'root',
-#         'PASSWORD': 'root',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'superprod',
-        'USER': 'admin',
-        'PASSWORD': 'admin',
-        'HOST': '192.168.90.80',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'superprod',
+#         'USER': 'admin',
+#         'PASSWORD': 'admin',
+#         'HOST': '192.168.90.80',
+#         'PORT': '3306',
+#     }
+# }
 
 
 # Password validation

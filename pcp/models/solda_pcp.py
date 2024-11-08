@@ -11,8 +11,8 @@ class SoldaPcp(models.Model):
         ('NÃO FINALIZADA', 'NÃO FINALIZADA')
     ]
 
-    cor_1 = models.ForeignKey(Atributo, on_delete=models.CASCADE)
-    cor_2 = models.ForeignKey(Atributo, on_delete=models.CASCADE)
+    cor_1 = models.ForeignKey(Atributo, on_delete=models.CASCADE, related_name='soldapcp_cor1')
+    cor_2 = models.ForeignKey(Atributo, on_delete=models.CASCADE, related_name='soldapcp_cor2')
     quantidade = models.IntegerField()
     ordem = models.IntegerField()
     status = models.CharField(max_length=100, choices=STATUS)
