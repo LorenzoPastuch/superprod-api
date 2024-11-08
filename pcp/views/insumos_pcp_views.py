@@ -3,6 +3,8 @@ from rest_framework.decorators import action
 from pcp.models.producao_pcp import ProducaoPcp
 from pcp.models.insumos_pcp import InsumosPcp
 from rest_framework.response import Response
+from cadastros.serializers.maquina_serializer import MaquinaSerializer
+from cadastros.models.maquina import Maquina
 from pcp.serializers.insumos_pcp_serializer import InsumosPcpSerializer, PigmentoSerializer
 from django.db.models import Sum
 
@@ -40,7 +42,7 @@ class InsumosPcpViewSet(viewsets.ViewSet):
                     'tipo_material': insumo['producao__maquina__produto__material'],
                     'tipo_embalagem': insumo['producao__maquina__produto__embalagem'],
                     'produto': insumo['producao__maquina__produto__nome'],
-                    'maquina': maquina_id,
+                    'maquina': MaquinaSerializer(Maquina.objects.get(id=maquina_id)).data,
                     'total_caixas': insumo['total_caixas'],
                     'total_qnt_material': insumo['total_qnt_material'],
                     'total_embalagens': insumo['total_embalagens'],

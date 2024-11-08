@@ -11,7 +11,7 @@ class ProdutoSerializer(LogCadastroMixin, serializers.ModelSerializer):
     datagravacao = serializers.SerializerMethodField()
     class Meta:
         model = Produto
-        fields = ['id', 'nome', 'sku', 'peso', 'material', 'embalagem', 'uncaixa', 'status', 'usuariogravacao', 'datagravacao']
+        fields = ['id', 'nome', 'sku', 'peso', 'material', 'embalagem', 'uncaixa', 'unembalagem', 'status', 'usuariogravacao', 'datagravacao']
 
     def create(self, validated_data):
         request = self.context.get('request')

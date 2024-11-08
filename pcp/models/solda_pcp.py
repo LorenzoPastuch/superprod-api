@@ -3,7 +3,7 @@ from cadastros.models.atributo import Atributo
 from pcp.models.maquina_pcp import MaquinaPcp
 from cadastros.models.empresa import Empresa
 
-class ProducaoPcp(models.Model):
+class SoldaPcp(models.Model):
     STATUS = [
         ('FILA P/ PRODUZIR', 'FILA P/ PRODUZIR'),
         ('EM PRODUÇÃO', 'EM PRODUÇÃO'),
@@ -11,8 +11,8 @@ class ProducaoPcp(models.Model):
         ('NÃO FINALIZADA', 'NÃO FINALIZADA')
     ]
 
-    atributo = models.ForeignKey(Atributo, on_delete=models.CASCADE)
-    arte = models.CharField(max_length=100, blank=True, null=True)
+    cor_1 = models.ForeignKey(Atributo, on_delete=models.CASCADE)
+    cor_2 = models.ForeignKey(Atributo, on_delete=models.CASCADE)
     quantidade = models.IntegerField()
     ordem = models.IntegerField()
     status = models.CharField(max_length=100, choices=STATUS)

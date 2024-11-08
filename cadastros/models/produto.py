@@ -14,6 +14,7 @@ class Produto(models.Model):
     material = models.CharField(max_length=100, choices=MATERIAIS)
     embalagem = models.CharField(max_length=10)
     uncaixa = models.IntegerField()
+    unembalagem = models.IntegerField()
     status = models.BooleanField(default=True)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
 

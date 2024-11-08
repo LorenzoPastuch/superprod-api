@@ -1,28 +1,23 @@
 from rest_framework import serializers
-from pcp.models.producao_pcp import ProducaoPcp
+from pcp.models.solda_pcp import SoldaPcp
 from cadastros.models.usuario import Perfil
 from cadastros.models.empresa import Empresa
-from cadastros.models.produto import Produto
 from cadastros.models.molde import Molde
 from pcp.models.maquina_pcp import MaquinaPcp
 from pcp.models.insumos_pcp import InsumosPcp
 from cadastros.models.atributo import Atributo
-from cadastros.serializers.produto_serializer import ProdutoSerializer
 from cadastros.serializers.atributo_serializer import AtributoSerializer
-import math
 from datetime import datetime, timedelta
-import numpy as np
-import pytz
-from decimal import Decimal
 
-
-class ProducaoPcpSerializer(serializers.ModelSerializer):
-    atributo = serializers.SerializerMethodField()
+class SoldaPcpSerializer(serializers.ModelSerializer):
+    cor_1 = serializers.SerializerMethodField()
+    cor_2 = serializers.SerializerMethodField()
     ciclo = serializers.SerializerMethodField()
     cavidades = serializers.SerializerMethodField()
     class Meta:
-        model = ProducaoPcp
-        fields = ['id', 'atributo', 'arte', 'quantidade', 'ordem', 'horainicial', 'horafinal', 'ciclo', 'cavidades', 'qnt_produzida', 'status', 'maquina']
+        model = SoldaPcp
+        fields = ['id', 'cor_1', 'cor_2', 'quantidade', 'ordem', 'horainicial', 'horafinal', 'ciclo', 'cavidades', 'qnt_produzida', 'status', 'maquina']
+        read_only_fields =['caixas', 'horafinal']
 
     def create(self, validate_data):
         request = self.context.get('request')
@@ -33,8 +28,8 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         empresa_ativa = Empresa.objects.get(id=id_empresa_ativa)
 
         maquina = self.context['request'].data.get('maquina')
-        atributo = self.context['request'].data.get('atributo', {}).get('id')
-        arte = self.context['request'].data.get('arte')
+        cor_1 = self.context['request'].data.get('cor_1', {}).get('id')
+        cor_2 = self.context['request'].data.get('cor_2', {}).get('id')
         quantidade = self.context['request'].data.get('quantidade')
         status = self.context['request'].data.get('status')
         ordem = self.context['request'].data.get('ordem')
@@ -43,7 +38,8 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
 
         produto = MaquinaPcp.objects.get(maquina=maquina).produto
         molde = Molde.objects.get(produto=produto.id)
-        atributo = Atributo.objects.get(id=atributo)
+        cor_1 = Atributo.objects.get(id=cor_1)
+        cor_2 = Atributo.objects.get(id=cor_2)
         ciclo= molde.ciclo 
         cavidades= molde.cavidades
 
@@ -53,23 +49,10 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         else:
             horafinal = None 
             
-        caixas = math.ceil(quantidade/produto.uncaixa)
-        embalagens = math.ceil(quantidade/produto.unembalagem)
-
-        if(produto.material == 'PS'):
-            pigmento = Decimal(quantidade)*Decimal(0.02)*produto.peso
-        else:
-            if('TRANSLUCIDO' in atributo.nome or 'NEON' in atributo.nome):
-                pigmento = Decimal(quantidade)*Decimal(0.03)*produto.peso
-            else:
-                pigmento = Decimal(quantidade)*Decimal(0.02)*produto.peso
-
-        qnt_material = quantidade*produto.peso
-
-        producao_pcp = ProducaoPcp.objects.create(
+        producao_solda = SoldaPcp.objects.create(
             maquina = MaquinaPcp.objects.get(id=maquina),
-            atributo = atributo,
-            arte=arte,
+            cor_1 = cor_1,
+            cor_2 = cor_2,
             quantidade = quantidade, 
             status = status,
             ordem = ordem,
@@ -79,15 +62,7 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
             empresa=empresa_ativa
         )
 
-        InsumosPcp.objects.create(
-            producao = ProducaoPcp.objects.get(id=producao_pcp.id),
-            caixas=caixas,
-            pigmento=pigmento,
-            embalagem=embalagens,
-            qnt_material=qnt_material
-        )
-
-        return producao_pcp
+        return producao_solda
     
     def update(self, instance, validate_data):
         request = self.context.get('request')
@@ -98,8 +73,8 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         empresa_ativa = Empresa.objects.get(id=id_empresa_ativa)
 
         maquina = self.context['request'].data.get('maquina', instance.maquina)
-        atributo = self.context['request'].data.get('atributo', {}).get('id', instance.atributo.id)
-        arte = self.context['request'].data.get('arte', instance.arte)
+        cor_1 = self.context['request'].data.get('cor_1', {}).get('id', instance.atributo.id)
+        cor_2 = self.context['request'].data.get('cor_2', {}).get('id', instance.atributo.id)
         quantidade = self.context['request'].data.get('quantidade', instance.quantidade)
         status = self.context['request'].data.get('status', instance.status)
         ordem = self.context['request'].data.get('ordem', instance.ordem)
@@ -107,7 +82,6 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         qnt_produzida = self.context['request'].data.get('qnt_produzida', instance.qnt_produzida)
 
         produto = MaquinaPcp.objects.get(maquina=maquina).produto
-        atributo = Atributo.objects.get(id=atributo)
         molde = Molde.objects.get(produto=produto.id)
         ciclo= molde.ciclo 
         cavidades= molde.cavidades
@@ -118,23 +92,10 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         else:
             horafinal = None 
         
-        caixas = math.ceil(quantidade/produto.uncaixa)
-        embalagens = math.ceil(quantidade/produto.unembalagem)
-
-        if(produto.material == 'PS'):
-            pigmento = Decimal(quantidade)*Decimal(0.02)*produto.peso
-        else:
-            if('TRANSLUCIDO' in atributo.nome or 'NEON' in atributo.nome):
-                pigmento = Decimal(quantidade)*Decimal(0.03)*produto.peso
-            else:
-                pigmento = Decimal(quantidade)*Decimal(0.02)*produto.peso
-        
-        qnt_material = quantidade*produto.peso
-
         instance.empresa = empresa_ativa
         instance.maquina = MaquinaPcp.objects.get(id=maquina)
-        instance.atributo = atributo
-        instance.arte = arte
+        instance.cor_1 = Atributo.objects.get(id=cor_1)
+        instance.cor_2 = Atributo.objects.get(id=cor_2)
         instance.quantidade = quantidade
         instance.ordem = ordem
         instance.status = status
@@ -144,18 +105,8 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
 
         instance.save()
 
-        insumo = InsumosPcp.objects.get(producao=instance)
-        insumo.caixas = caixas
-        insumo.pigmento = pigmento
-        insumo.embalagem = embalagens
-        insumo.qnt_material = qnt_material
-
-        insumo.save()
-
         return instance
  
-    def get_atributo(self, obj):
-        return AtributoSerializer(obj.atributo).data
     
     def calcular_data_final(self, hora_inicial, horas_necessarias):
         
@@ -209,3 +160,8 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         cavidades= molde.cavidades
         return cavidades
     
+    def get_cor_1(self, obj):
+        return AtributoSerializer(obj.cor_1).data
+    
+    def get_cor_2(self, obj):
+        return AtributoSerializer(obj.cor_2).data

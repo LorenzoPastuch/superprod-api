@@ -6,40 +6,18 @@ from cadastros.models.produto import Produto
 from cadastros.models.maquina import Maquina
 from cadastros.models.atributo import Atributo
 from cadastros.serializers.produto_serializer import ProdutoSerializer
-from cadastros.serializers.atributo_serializer import AtributoSerializer
+from cadastros.serializers.maquina_serializer import MaquinaSerializer
 from pcp.models.producao_pcp import ProducaoPcp
 
 
 class MaquinaPcpSerializer(serializers.ModelSerializer):
     atributo =  serializers.SerializerMethodField()
     produto = serializers.SerializerMethodField()
+    maquina = serializers.SerializerMethodField()
     class Meta:
         model = MaquinaPcp
         fields = ['id', 'atributo', 'produto', 'status', 'prioridade', 'maquina']
 
-    # def create(self, validate_data):
-    #     request = self.context.get('request')
-    #     user = request.user
-
-    #     perfil = Perfil.objects.get(usuario=user)
-    #     id_empresa_ativa = perfil.empresaativa
-    #     empresa_ativa = Empresa.objects.get(id=id_empresa_ativa)
-
-    #     maquina = self.context['request'].data.get('maquina', {})
-    #     atributo = self.context['request'].data.get('atributo', {})
-    #     quantidade = self.context['request'].data.get('quantidade')
-    #     status = self.context['request'].data.get('status')
-    #     ordem = self.context['request'].data.get('status')
-
-    #     producao_pcp = ProducaoPcp.objects.create(
-    #         maquina = Maquina.objects.get(id=maquina['id']),
-    #         atributo = Atributo.objects.get(id=atributo['id']),
-    #         quantidade = quantidade, 
-    #         status = status,
-    #         ordem = ordem,
-    #         empresa_ativa=empresa_ativa
-    #     )
-    #     return producao_pcp
     def update(self, instance, validated_data):
         request = self.context.get('request')
         user = request.user
@@ -51,7 +29,7 @@ class MaquinaPcpSerializer(serializers.ModelSerializer):
         produto = self.context['request'].data.get('produto', {}).get('id', instance.produto.id)
         status = self.context['request'].data.get('status', instance.status)
         prioridade = self.context['request'].data.get('prioridade', instance.prioridade)
-        maquina = self.context['request'].data.get('maquina', instance.maquina)
+        maquina = self.context['request'].data.get('maquina',{}).get('id', instance.maquina.id)
 
         instance.empresa = empresa_ativa
         instance.produto = Produto.objects.get(id=produto)
@@ -69,3 +47,6 @@ class MaquinaPcpSerializer(serializers.ModelSerializer):
     
     def get_produto(self, obj):
         return ProdutoSerializer(obj.produto).data
+    
+    def get_maquina(self, obj):
+        return MaquinaSerializer(obj.maquina).data
