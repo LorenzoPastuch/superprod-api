@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$&djva4%v94@(1u#yrv!lq#$g^oto*dya%xe_&u)ez@@kc2luw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "http://localhost:4200",
@@ -90,7 +90,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://192.168.90.80:4200",
 ]
 
-CORS_ALLOW_CREDENTIALS = False
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'superprod-api.urls'
 

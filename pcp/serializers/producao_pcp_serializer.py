@@ -22,7 +22,7 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
     cavidades = serializers.SerializerMethodField()
     class Meta:
         model = ProducaoPcp
-        fields = ['id', 'atributo', 'arte', 'quantidade', 'ordem', 'horainicial', 'horafinal', 'ciclo', 'cavidades', 'qnt_produzida', 'status', 'maquina']
+        fields = ['id', 'atributo', 'arte', 'unidades', 'kilogramas', 'ordem', 'horainicial', 'horafinal', 'ciclo', 'cavidades', 'qnt_produzida', 'status', 'maquina']
 
     def create(self, validate_data):
         request = self.context.get('request')
@@ -35,7 +35,8 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         maquina = self.context['request'].data.get('maquina')
         atributo = self.context['request'].data.get('atributo', {}).get('id')
         arte = self.context['request'].data.get('arte')
-        quantidade = self.context['request'].data.get('quantidade')
+        unidades = self.context['request'].data.get('unidades')
+        kilogramas = self.context['request'].data.get('kilogramas')
         status = self.context['request'].data.get('status')
         ordem = self.context['request'].data.get('ordem')
         horainicial = self.context['request'].data.get('horainicial')
@@ -47,30 +48,36 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         ciclo= molde.ciclo 
         cavidades= molde.cavidades
 
+        if (kilogramas == 0):
+            kilogramas=unidades*(produto.peso + (molde.pesogalho/cavidades))
+        elif(unidades == 0):
+            unidades=kilogramas/(produto.peso+(molde.pesogalho/cavidades))
+
         if(horainicial):
-            horas_necessarias = float(quantidade*ciclo/(3600*cavidades))
+            horas_necessarias = float(unidades*ciclo/(3600*cavidades))
             horafinal = self.calcular_data_final(horainicial, horas_necessarias)
         else:
             horafinal = None 
             
-        caixas = math.ceil(quantidade/produto.uncaixa)
-        embalagens = math.ceil(quantidade/produto.unembalagem)
+        caixas = math.ceil(unidades/produto.uncaixa)
+        embalagens = math.ceil(unidades/produto.unembalagem)
 
         if(produto.material == 'PS'):
-            pigmento = Decimal(quantidade)*Decimal(0.02)*produto.peso
+            pigmento = Decimal(unidades)*Decimal(0.02)*produto.peso
         else:
             if('TRANSLUCIDO' in atributo.nome or 'NEON' in atributo.nome):
-                pigmento = Decimal(quantidade)*Decimal(0.03)*produto.peso
+                pigmento = Decimal(unidades)*Decimal(0.03)*produto.peso
             else:
-                pigmento = Decimal(quantidade)*Decimal(0.02)*produto.peso
+                pigmento = Decimal(unidades)*Decimal(0.02)*produto.peso
 
-        qnt_material = quantidade*produto.peso
+        qnt_material = unidades*produto.peso
 
         producao_pcp = ProducaoPcp.objects.create(
             maquina = MaquinaPcp.objects.get(id=maquina),
             atributo = atributo,
             arte=arte,
-            quantidade = quantidade, 
+            unidades = unidades,
+            kilogramas = kilogramas, 
             status = status,
             ordem = ordem,
             horainicial=horainicial,
@@ -100,7 +107,8 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         maquina = self.context['request'].data.get('maquina', instance.maquina)
         atributo = self.context['request'].data.get('atributo', {}).get('id', instance.atributo.id)
         arte = self.context['request'].data.get('arte', instance.arte)
-        quantidade = self.context['request'].data.get('quantidade', instance.quantidade)
+        unidades = self.context['request'].data.get('unidades', instance.unidades)
+        kilogramas = self.context['request'].data.get('kilogramas', instance.kilogramas)
         status = self.context['request'].data.get('status', instance.status)
         ordem = self.context['request'].data.get('ordem', instance.ordem)
         horainicial = self.context['request'].data.get('horainicial', instance.horainicial)
@@ -112,30 +120,36 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         ciclo= molde.ciclo 
         cavidades= molde.cavidades
 
+        if (kilogramas == 0):
+            kilogramas=unidades*(produto.peso + (molde.pesogalho/cavidades))
+        elif(unidades == 0):
+            unidades=kilogramas/(produto.peso + (molde.pesogalho/cavidades))
+
         if(horainicial):
-            horas_necessarias = float(quantidade*ciclo/(3600*cavidades))
+            horas_necessarias = float(unidades*ciclo/(3600*cavidades))
             horafinal = self.calcular_data_final(horainicial, horas_necessarias)
         else:
             horafinal = None 
         
-        caixas = math.ceil(quantidade/produto.uncaixa)
-        embalagens = math.ceil(quantidade/produto.unembalagem)
+        caixas = math.ceil(unidades/produto.uncaixa)
+        embalagens = math.ceil(unidades/produto.unembalagem)
 
         if(produto.material == 'PS'):
-            pigmento = Decimal(quantidade)*Decimal(0.02)*produto.peso
+            pigmento = Decimal(unidades)*Decimal(0.02)*produto.peso
         else:
             if('TRANSLUCIDO' in atributo.nome or 'NEON' in atributo.nome):
-                pigmento = Decimal(quantidade)*Decimal(0.03)*produto.peso
+                pigmento = Decimal(unidades)*Decimal(0.03)*produto.peso
             else:
-                pigmento = Decimal(quantidade)*Decimal(0.02)*produto.peso
+                pigmento = Decimal(unidades)*Decimal(0.02)*produto.peso
         
-        qnt_material = quantidade*produto.peso
+        qnt_material = unidades*produto.peso
 
         instance.empresa = empresa_ativa
         instance.maquina = MaquinaPcp.objects.get(id=maquina)
         instance.atributo = atributo
         instance.arte = arte
-        instance.quantidade = quantidade
+        instance.unidades = unidades
+        instance.kilogramas = kilogramas
         instance.ordem = ordem
         instance.status = status
         instance.horainicial = horainicial
@@ -159,10 +173,8 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
     
     def calcular_data_final(self, hora_inicial, horas_necessarias):
         
-        print(hora_inicial)
         hora_inicial = datetime.strptime(hora_inicial, "%Y-%m-%dT%H:%M:%S.%fZ")
         hora_inicial = hora_inicial - timedelta(hours=3) #soluçao podre pra resolver problema de fuso horario
-        print(hora_inicial)
 
         inicio_dia_util = timedelta(hours=7)
         fim_dia_util = timedelta(hours=17)
@@ -190,7 +202,6 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
             excesso_horas = (hora_final - hora_final.replace(hour=17, minute=0, second=0)).seconds / 3600
             hora_final = self.proximo_dia_util(hora_final + timedelta(days=1)).replace(hour=7, minute=0, second=0)
             hora_final += timedelta(hours=excesso_horas)
-        print(hora_final)
         return hora_final + timedelta(hours=3) #soluçao podre pra resolver problema de fuso horario
 
     def proximo_dia_util(self, data):

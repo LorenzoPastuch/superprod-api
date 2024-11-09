@@ -12,11 +12,12 @@ from pcp.models.producao_pcp import ProducaoPcp
 
 class MaquinaPcpSerializer(serializers.ModelSerializer):
     atributo =  serializers.SerializerMethodField()
+    arte =  serializers.SerializerMethodField()
     produto = serializers.SerializerMethodField()
     maquina = serializers.SerializerMethodField()
     class Meta:
         model = MaquinaPcp
-        fields = ['id', 'atributo', 'produto', 'status', 'prioridade', 'maquina']
+        fields = ['id', 'atributo', 'arte', 'produto', 'status', 'prioridade', 'maquina']
 
     def update(self, instance, validated_data):
         request = self.context.get('request')
@@ -44,6 +45,11 @@ class MaquinaPcpSerializer(serializers.ModelSerializer):
         maquina_id = obj.maquina.id
         producao = ProducaoPcp.objects.filter(status='EM PRODUÇÃO', maquina=maquina_id).first()
         return producao.atributo.nome if producao else None
+    
+    def get_arte(self, obj):
+        maquina_id = obj.maquina.id
+        producao = ProducaoPcp.objects.filter(status='EM PRODUÇÃO', maquina=maquina_id).first()
+        return producao.arte if producao else None
     
     def get_produto(self, obj):
         return ProdutoSerializer(obj.produto).data
