@@ -7,7 +7,8 @@ class MaquinaPcp(models.Model):
     STATUS = [
         ('PARADA', 'PARADA'),
         ('EM PRODUÇÃO', 'EM PRODUÇÃO'),
-        ('TROCA DE MOLDE', 'TROCA DE MOLDE')
+        ('TROCA DE MOLDE', 'TROCA DE MOLDE'),
+        ('FILA DE PRODUÇÃO', 'FILA DE PRODUÇÃO'),
     ]
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     status = models.CharField(max_length=100, choices=STATUS)

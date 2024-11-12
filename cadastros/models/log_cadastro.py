@@ -11,5 +11,6 @@ class Log_cadastro(models.Model):
     colaborador = models.ForeignKey('Colaborador', on_delete=models.CASCADE, null=True)
     atributo = models.ForeignKey('Atributo', on_delete=models.CASCADE, null=True)
     producao = models.ForeignKey('Producao', on_delete=models.CASCADE, null=True)
+    insumo = models.ForeignKey('Insumo', on_delete=models.CASCADE, null=True)
 
     

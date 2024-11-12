@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('cadastro/', include('cadastros.urls')),
     path('pcp/', include('pcp.urls')),
+    path('almoxarifado/', include('almoxarifado.urls')),
     path('oauth/token', CustomTokenObtainPairView.as_view(), name='custom_token_obtain_pair'),
     path('tokens/revoke', TokenRevokeView.as_view(), name='token_revoke'),
     path('cnpj/<str:cnpj>', CnpjViewSet.as_view(), name='cnpj'),

@@ -8,6 +8,7 @@ from cadastros.models.atributo import Atributo
 from cadastros.models.colaborador import Colaborador
 from cadastros.models.maquina import Maquina
 from cadastros.models.producao import Producao
+from cadastros.models.insumo import Insumo
 
 
 class LogCadastroMixin:
@@ -23,6 +24,7 @@ class LogCadastroMixin:
         colaborador = instance if isinstance(instance, Colaborador) else None
         atributo = instance if isinstance(instance, Atributo) else None
         producao = instance if isinstance(instance, Producao) else None
+        insumo = instance if isinstance(instance, Insumo) else None
 
         Log_cadastro.objects.create(
             comando=comando,
@@ -34,7 +36,8 @@ class LogCadastroMixin:
             produto=produto,
             colaborador=colaborador,
             atributo=atributo,
-            producao=producao
+            producao=producao,
+            insumo=insumo
         )
 
     def create(self, validated_data):
