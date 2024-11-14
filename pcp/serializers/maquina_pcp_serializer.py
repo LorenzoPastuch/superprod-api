@@ -4,10 +4,10 @@ from cadastros.models.usuario import Perfil
 from cadastros.models.empresa import Empresa
 from cadastros.models.produto import Produto
 from cadastros.models.maquina import Maquina
-from cadastros.models.atributo import Atributo
 from cadastros.serializers.produto_serializer import ProdutoSerializer
 from cadastros.serializers.maquina_serializer import MaquinaSerializer
 from pcp.models.producao_pcp import ProducaoPcp
+from pcp.models.solda_pcp import SoldaPcp
 
 
 class MaquinaPcpSerializer(serializers.ModelSerializer):
@@ -15,9 +15,12 @@ class MaquinaPcpSerializer(serializers.ModelSerializer):
     arte =  serializers.SerializerMethodField()
     produto = serializers.SerializerMethodField()
     maquina = serializers.SerializerMethodField()
+    cor_1 = serializers.SerializerMethodField()
+    cor_2 = serializers.SerializerMethodField()
+
     class Meta:
         model = MaquinaPcp
-        fields = ['id', 'atributo', 'arte', 'produto', 'status', 'prioridade', 'maquina']
+        fields = ['id', 'atributo', 'arte', 'cor_1', 'cor_2', 'produto', 'status', 'prioridade', 'maquina']
 
     def update(self, instance, validated_data):
         request = self.context.get('request')
@@ -50,6 +53,16 @@ class MaquinaPcpSerializer(serializers.ModelSerializer):
         maquina_id = obj.maquina.id
         producao = ProducaoPcp.objects.filter(status='EM PRODUÇÃO', maquina=maquina_id).first()
         return producao.arte if producao else None
+    
+    def get_cor_1(self, obj):
+        maquina_id = obj.maquina.id
+        producao = SoldaPcp.objects.filter(status='EM PRODUÇÃO', maquina=maquina_id).first()
+        return producao.cor_1.nome if producao else None
+
+    def get_cor_2(self, obj):
+        maquina_id = obj.maquina.id
+        producao = SoldaPcp.objects.filter(status='EM PRODUÇÃO', maquina=maquina_id).first()
+        return producao.cor_2.nome if producao else None
     
     def get_produto(self, obj):
         return ProdutoSerializer(obj.produto).data

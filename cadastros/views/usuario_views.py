@@ -112,7 +112,6 @@ class UsuarioViewSet(viewsets.ModelViewSet):
             codename = permissao.get('codename')
             try:
                 permissao = Permission.objects.get(codename=codename)
-                print(permissao)
                 user.user_permissions.add(permissao)
             except Permission.DoesNotExist:
                 return Response({'error': 'One or more permissions do not exist'}, status=status.HTTP_400_BAD_REQUEST)
@@ -125,7 +124,6 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         try:
             usuario = self.get_object()
             nova_empresa_id = request.data.get('empresaativa')
-            print(nova_empresa_id)
 
             if not nova_empresa_id:
                 return Response({'error': 'ID da empresa é necessário.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -136,7 +134,6 @@ class UsuarioViewSet(viewsets.ModelViewSet):
                 return Response({'error': 'Empresa não encontrada ou não associada a este usuário.'}, status=status.HTTP_404_NOT_FOUND)
 
             perfil = usuario.perfil
-            print(perfil)
 
             # Atualiza a empresa ativa do usuário
             perfil.empresaativa = nova_empresa_id

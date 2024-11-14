@@ -73,8 +73,8 @@ class SoldaPcpSerializer(serializers.ModelSerializer):
         empresa_ativa = Empresa.objects.get(id=id_empresa_ativa)
 
         maquina = self.context['request'].data.get('maquina', instance.maquina)
-        cor_1 = self.context['request'].data.get('cor_1', {}).get('id', instance.atributo.id)
-        cor_2 = self.context['request'].data.get('cor_2', {}).get('id', instance.atributo.id)
+        cor_1 = self.context['request'].data.get('cor_1', {}).get('id', instance.cor_1.id)
+        cor_2 = self.context['request'].data.get('cor_2', {}).get('id', instance.cor_2.id)
         quantidade = self.context['request'].data.get('quantidade', instance.quantidade)
         status = self.context['request'].data.get('status', instance.status)
         ordem = self.context['request'].data.get('ordem', instance.ordem)

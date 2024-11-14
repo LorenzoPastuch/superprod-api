@@ -5,7 +5,7 @@ from pcp.models.insumos_pcp import InsumosPcp
 from rest_framework.response import Response
 from cadastros.serializers.maquina_serializer import MaquinaSerializer
 from cadastros.models.maquina import Maquina
-from pcp.serializers.insumos_pcp_serializer import InsumosPcpSerializer, PigmentoSerializer
+from pcp.serializers.insumos_pcp_serializer import PigmentoSerializer
 from django.db.models import Sum
 
 

@@ -3,7 +3,6 @@ from rest_framework.decorators import action
 from pcp.models.maquina_pcp import MaquinaPcp
 from rest_framework.response import Response
 from cadastros.models.usuario import Perfil
-from pcp.serializers.producao_pcp_serializer import ProducaoPcpSerializer
 from pcp.serializers.maquina_pcp_serializer import MaquinaPcpSerializer
 from cadastros.serializers.produto_serializer import ProdutoSerializer
 
