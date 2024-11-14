@@ -14,7 +14,7 @@ class MoldeSerializer(LogCadastroMixin, serializers.ModelSerializer):
     
     class Meta:
         model = Molde
-        fields = ['id', 'nome', 'produto', 'fabricante', 'cavidades', 'ciclo', 'status', 'usuariogravacao', 'datagravacao']
+        fields = ['id', 'nome', 'produto', 'fabricante', 'cavidades', 'ciclo', 'pesogalho', 'status', 'usuariogravacao', 'datagravacao']
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -51,6 +51,8 @@ class MoldeSerializer(LogCadastroMixin, serializers.ModelSerializer):
         fabricante = self.context['request'].data.get('fabricante', instance.fabricante)
         cavidades = self.context['request'].data.get('cavidades', instance.cavidades)
         ciclo = self.context['request'].data.get('ciclo', instance.ciclo)
+        pesogalho = self.context['request'].data.get('pesogalho', instance.pesogalho)
+
         status = self.context['request'].data.get('status', instance.status)
 
         instance.empresa = empresa_ativa
@@ -58,6 +60,7 @@ class MoldeSerializer(LogCadastroMixin, serializers.ModelSerializer):
         instance.fabricante = fabricante
         instance.cavidades = cavidades
         instance.ciclo = ciclo
+        instance.pesogalho = pesogalho
         instance.status = status
         instance.produto = Produto.objects.get(id=produto)
 
