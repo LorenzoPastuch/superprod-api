@@ -22,7 +22,7 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
     cavidades = serializers.SerializerMethodField()
     class Meta:
         model = ProducaoPcp
-        fields = ['id', 'atributo', 'arte', 'unidades', 'kilogramas', 'ordem', 'horainicial', 'horafinal', 'ciclo', 'cavidades', 'qnt_produzida', 'status', 'maquina']
+        fields = ['id', 'atributo', 'arte', 'pedido', 'falta', 'saida', 'unidades', 'kilogramas', 'ordem', 'horainicial', 'horafinal', 'ciclo', 'cavidades', 'qnt_produzida', 'status', 'maquina']
 
     def create(self, validate_data):
         request = self.context.get('request')
@@ -35,6 +35,9 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         maquina = self.context['request'].data.get('maquina')
         atributo = self.context['request'].data.get('atributo', {}).get('id')
         arte = self.context['request'].data.get('arte')
+        pedido = self.context['request'].data.get('pedido')
+        falta = self.context['request'].data.get('falta')
+        saida = self.context['request'].data.get('saida')
         unidades = self.context['request'].data.get('unidades')
         kilogramas = self.context['request'].data.get('kilogramas')
         status = self.context['request'].data.get('status')
@@ -51,7 +54,7 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         if (kilogramas == 0):
             kilogramas=unidades*(produto.peso + (molde.pesogalho/cavidades))
         elif(unidades == 0):
-            unidades=kilogramas/(produto.peso+(molde.pesogalho/cavidades))
+            unidades=Decimal(kilogramas)/(produto.peso+(molde.pesogalho/cavidades))
 
         if(horainicial):
             horas_necessarias = float(unidades*ciclo/(3600*cavidades))
@@ -76,6 +79,9 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
             maquina = MaquinaPcp.objects.get(id=maquina),
             atributo = atributo,
             arte=arte,
+            pedido=pedido,
+            saida=saida,
+            falta=falta,
             unidades = unidades,
             kilogramas = kilogramas, 
             status = status,
@@ -107,6 +113,9 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         maquina = self.context['request'].data.get('maquina', instance.maquina)
         atributo = self.context['request'].data.get('atributo', {}).get('id', instance.atributo.id)
         arte = self.context['request'].data.get('arte', instance.arte)
+        pedido = self.context['request'].data.get('pedido', instance.pedido)
+        falta = self.context['request'].data.get('falta', instance.falta)
+        saida = self.context['request'].data.get('saida', instance.saida)
         unidades = self.context['request'].data.get('unidades', instance.unidades)
         kilogramas = self.context['request'].data.get('kilogramas', instance.kilogramas)
         status = self.context['request'].data.get('status', instance.status)
@@ -123,7 +132,7 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         if (kilogramas == 0):
             kilogramas=unidades*(produto.peso + (molde.pesogalho/cavidades))
         elif(unidades == 0):
-            unidades=kilogramas/(produto.peso + (molde.pesogalho/cavidades))
+            unidades=Decimal(kilogramas)/(produto.peso + (molde.pesogalho/cavidades))
 
         if(horainicial):
             horas_necessarias = float(unidades*ciclo/(3600*cavidades))
@@ -148,6 +157,9 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         instance.maquina = MaquinaPcp.objects.get(id=maquina)
         instance.atributo = atributo
         instance.arte = arte
+        instance.pedido = pedido
+        instance.falta = falta
+        instance.saida = saida
         instance.unidades = unidades
         instance.kilogramas = kilogramas
         instance.ordem = ordem

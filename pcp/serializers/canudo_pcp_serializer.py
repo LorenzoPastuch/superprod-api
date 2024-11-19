@@ -8,6 +8,7 @@ from pcp.models.maquina_pcp import MaquinaPcp
 from cadastros.models.atributo import Atributo
 from cadastros.serializers.atributo_serializer import AtributoSerializer
 from datetime import datetime, timedelta
+from decimal import Decimal
 
 
 class CanudoPcpSerializer(serializers.ModelSerializer):
@@ -45,7 +46,7 @@ class CanudoPcpSerializer(serializers.ModelSerializer):
         if (kilogramas == 0):
             kilogramas=unidades*(produto.peso + (molde.pesogalho/cavidades))
         elif(unidades == 0):
-            unidades=kilogramas/(produto.peso+(molde.pesogalho/cavidades))
+            unidades=Decimal(kilogramas)/(produto.peso+(molde.pesogalho/cavidades))
 
         if(horainicial):
             horas_necessarias = float(unidades*ciclo/(3600*cavidades))
@@ -96,7 +97,7 @@ class CanudoPcpSerializer(serializers.ModelSerializer):
         if (kilogramas == 0):
             kilogramas=unidades*(produto.peso + (molde.pesogalho/cavidades))
         elif(unidades == 0):
-            unidades=kilogramas/(produto.peso + (molde.pesogalho/cavidades))
+            unidades=Decimal(kilogramas)/(produto.peso + (molde.pesogalho/cavidades))
 
         if(horainicial):
             horas_necessarias = float(unidades*ciclo/(3600*cavidades))
