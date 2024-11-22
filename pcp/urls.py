@@ -6,6 +6,7 @@ from pcp.views.insumos_pcp_views import InsumosPcpViewSet
 from pcp.views.solda_pcp_views import SoldaPcpViewSet
 from pcp.views.embaladores_pcp_views import EmbaladoresPcpViewSet
 from pcp.views.canudo_pcp_views import CanudoPcpViewSet
+from pcp.views.troca_molde_pcp_views import TrocaMoldePcpViewSet
 
 router = DefaultRouter(trailing_slash=False)
 router.register(r'producao', ProducaoPcpViewSet)
@@ -14,8 +15,8 @@ router.register(r'canudo', CanudoPcpViewSet)
 router.register(r'controle', MaquinaPcpViewSet)
 router.register(r'insumos', InsumosPcpViewSet, basename='InsumosPcp')
 router.register(r'embaladores', EmbaladoresPcpViewSet)
+router.register(r'trocamolde', TrocaMoldePcpViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    
 ]

@@ -15,7 +15,7 @@ class ProducaoPcp(models.Model):
 
     arte = models.CharField(max_length=100, blank=True, null=True)
     pedido = models.CharField(max_length=10, blank=True, null=True)
-    falta = models.IntegerField(max_length=10, blank=True, null=True)
+    falta = models.IntegerField(blank=True, null=True)
     saida = models.DateTimeField(null=True, blank=True)
 
     unidades = models.IntegerField()

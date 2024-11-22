@@ -26,7 +26,7 @@ class InsumosPcpViewSet(viewsets.ViewSet):
             total_caixas=Sum('caixas'),
             total_qnt_material=Sum('qnt_material'),
             total_embalagens=Sum('embalagem')
-        )
+        ).order_by('producao__maquina__id')
 
         resultados = []
         
