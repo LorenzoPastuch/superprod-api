@@ -16,10 +16,10 @@ class TrocaMoldePcpSerializer(serializers.ModelSerializer):
 
     def create(self, validate_data):
 
-        injetora  = self.context['request'].data.get('injetora')
-        molde_maquina = self.context['request'].data.get('molde_maquina')
+        injetora  = self.context['request'].data.get('injetora', {}).get('id')
+        molde_maquina = self.context['request'].data.get('molde_maquina', {}).get('id')
         status_molde = self.context['request'].data.get('status_molde')
-        proximo_molde = self.context['request'].data.get('proximo_molde')
+        proximo_molde = self.context['request'].data.get('proximo_molde', {}).get('id')
         status_troca = self.context['request'].data.get('status_troca')
         data_prevista = self.context['request'].data.get('data_prevista')
         data_realizada = self.context['request'].data.get('data_realizada')

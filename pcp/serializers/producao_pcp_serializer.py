@@ -66,14 +66,14 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         embalagens = math.ceil(unidades/produto.unembalagem)
 
         if(produto.material == 'PS'):
-            pigmento = Decimal(unidades)*Decimal(0.02)*produto.peso
+            pigmento = Decimal(kilogramas)*Decimal(0.02)
         else:
             if('TRANSLUCIDO' in atributo.nome or 'NEON' in atributo.nome):
-                pigmento = Decimal(unidades)*Decimal(0.03)*produto.peso
+                pigmento = Decimal(kilogramas)*Decimal(0.03)
             else:
-                pigmento = Decimal(unidades)*Decimal(0.02)*produto.peso
+                pigmento = Decimal(kilogramas)*Decimal(0.02)
 
-        qnt_material = unidades*produto.peso
+        # qnt_material = unidades*produto.peso
 
         producao_pcp = ProducaoPcp.objects.create(
             maquina = MaquinaPcp.objects.get(id=maquina),
@@ -97,7 +97,7 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
             caixas=caixas,
             pigmento=pigmento,
             embalagem=embalagens,
-            qnt_material=qnt_material
+            qnt_material=kilogramas
         )
 
         return producao_pcp
@@ -144,12 +144,12 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         embalagens = math.ceil(unidades/produto.unembalagem)
 
         if(produto.material == 'PS'):
-            pigmento = Decimal(unidades)*Decimal(0.02)*produto.peso
+            pigmento = Decimal(kilogramas)*Decimal(0.02)
         else:
             if('TRANSLUCIDO' in atributo.nome or 'NEON' in atributo.nome):
-                pigmento = Decimal(unidades)*Decimal(0.03)*produto.peso
+                pigmento = Decimal(kilogramas)*Decimal(0.03)
             else:
-                pigmento = Decimal(unidades)*Decimal(0.02)*produto.peso
+                pigmento = Decimal(kilogramas)*Decimal(0.02)
         
         qnt_material = unidades*produto.peso
 
@@ -174,7 +174,7 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         insumo.caixas = caixas
         insumo.pigmento = pigmento
         insumo.embalagem = embalagens
-        insumo.qnt_material = qnt_material
+        insumo.qnt_material = kilogramas
 
         insumo.save()
 

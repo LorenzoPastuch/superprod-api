@@ -3,9 +3,11 @@ from cadastros.models.maquina import Maquina, MoldeMaquina
 from cadastros.models.molde import Molde
 from cadastros.models.usuario import Perfil
 from cadastros.models.empresa import Empresa
+from cadastros.models.produto import Produto
 from cadastros.serializers.molde_serializer import MoldeSerializer
 from cadastros.serializers.log_cadastro_serializer import LogCadastroMixin
 from cadastros.models.log_cadastro import Log_cadastro
+from pcp.models.maquina_pcp import MaquinaPcp
 
 class MoldeMaquinaSerializer(serializers.ModelSerializer):
     molde = MoldeSerializer()
@@ -30,6 +32,13 @@ class MaquinaSerializer(LogCadastroMixin, serializers.ModelSerializer):
         empresa_ativa = Empresa.objects.get(id=id_empresa_ativa)
 
         maquina = Maquina.objects.create(empresa=empresa_ativa, **validated_data)
+        MaquinaPcp.objects.create(
+            status='PARADA',
+            empresa=empresa_ativa,
+            maquina=maquina,
+            produto=Produto.objects.get(id=1),
+            prioridade=False
+        )
 
         moldes_data = self.context['request'].data.get('moldes', [])
 
@@ -60,7 +69,18 @@ class MaquinaSerializer(LogCadastroMixin, serializers.ModelSerializer):
         instance.peso = validated_data.get('peso', instance.peso)
         instance.status = validated_data.get('status', instance.status)
         instance.save()
-
+        if (instance.status==False):
+            print('aqui')
+            MaquinaPcp.objects.filter(maquina=instance).delete()
+        elif not MaquinaPcp.objects.filter(maquina=instance).exists():
+            print('aqui nao')
+            MaquinaPcp.objects.create(
+                status='PARADA',
+                empresa=instance.empresa,
+                maquina=instance,
+                produto=Produto.objects.get(id=1),
+                prioridade=False
+            )
         # Atualizar moldes associados
         MoldeMaquina.objects.filter(maquina=instance).delete()
         for molde in moldes_data:

@@ -8,7 +8,7 @@ from cadastros.serializers.produto_serializer import ProdutoSerializer
 
 
 class MaquinaPcpViewSet(viewsets.ModelViewSet):
-    queryset = MaquinaPcp.objects.all()
+    queryset = MaquinaPcp.objects.all().order_by('maquina__nome', 'maquina__numero')
     serializer_class = MaquinaPcpSerializer
 
     def get_serializer_context(self):
