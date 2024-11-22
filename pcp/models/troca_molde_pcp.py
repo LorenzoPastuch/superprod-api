@@ -17,8 +17,8 @@ class TrocaMoldePcp(models.Model):
     ]
 
     injetora = models.ForeignKey(Maquina, on_delete=models.CASCADE)
-    molde_maquina = models.ForeignKey(Molde, on_delete=models.CASCADE)
-    proximo_molde = models.ForeignKey(Molde, on_delete=models.CASCADE)
+    molde_maquina = models.ForeignKey(Molde, on_delete=models.CASCADE, related_name='pcp.TrocaMoldePcp.molde_maquina')
+    proximo_molde = models.ForeignKey(Molde, on_delete=models.CASCADE, related_name='pcp.TrocaMoldePcp.proximo_molde')
     status_molde = models.CharField(max_length=50, choices=STATUSM)
     status_troca = models.CharField(max_length=50, choices=STATUST)
     data_prevista = models.DateTimeField(null=True, blank=True)
