@@ -8,7 +8,8 @@ from cadastros.serializers.produto_serializer import ProdutoSerializer
 from cadastros.serializers.maquina_serializer import MaquinaSerializer
 from pcp.models.producao_pcp import ProducaoPcp
 from pcp.models.solda_pcp import SoldaPcp
-
+from pcp.utils import emitir_atualizacao_producao
+import time
 
 class MaquinaPcpSerializer(serializers.ModelSerializer):
     atributo =  serializers.SerializerMethodField()
@@ -42,6 +43,12 @@ class MaquinaPcpSerializer(serializers.ModelSerializer):
         instance.prioridade = prioridade
 
         instance.save()
+
+        time.sleep(0.5) #soluçao temporaria para atualizar corretamente o websocket
+
+        serializer = MaquinaPcpSerializer(instance)
+        emitir_atualizacao_producao(serializer)
+
         return instance
 
     def get_atributo(self, obj):
@@ -65,7 +72,9 @@ class MaquinaPcpSerializer(serializers.ModelSerializer):
         return producao.cor_2.nome if producao else None
     
     def get_produto(self, obj):
-        return ProdutoSerializer(obj.produto).data
+        produto = obj.produto
+        return {"id": produto.id, "nome": produto.nome}
     
     def get_maquina(self, obj):
-        return MaquinaSerializer(obj.maquina).data
+        maquina = obj.maquina
+        return {"id": maquina.id, "nome": maquina.nome, "numero": maquina.numero}

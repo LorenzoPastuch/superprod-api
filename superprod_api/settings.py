@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'channels',
     'cadastros',
     'pcp',
     'almoxarifado'
@@ -93,7 +94,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-ROOT_URLCONF = 'superprod-api.urls'
+ROOT_URLCONF = 'superprod_api.urls'
 
 TEMPLATES = [
     {
@@ -111,7 +112,21 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'superprod-api.wsgi.application'
+WSGI_APPLICATION = 'superprod_api.wsgi.application'
+
+#WebSocket
+
+ASGI_APPLICATION = 'superprod_api.asgi.application' 
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
 
 
 # Database
