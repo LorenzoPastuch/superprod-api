@@ -32,7 +32,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     "http://localhost:4200",
-    "192.168.90.80",
+    "192.168.90.48",
     'localhost',
 ]
 
@@ -89,7 +89,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
-    "http://192.168.90.80:4200",
+    "http://192.168.90.48:4200",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -149,7 +149,7 @@ DATABASES = {
         'NAME': 'superprod',
         'USER': 'admin',
         'PASSWORD': 'admin',
-        'HOST': '192.168.90.80',
+        'HOST': '192.168.90.48',
         'PORT': '3306',
     }
 }
