@@ -32,7 +32,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     "http://localhost:4200",
-    "192.168.90.48",
+    "192.168.90.59",
     'localhost',
 ]
 
@@ -89,7 +89,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
-    "http://192.168.90.48:4200",
+    "http://192.168.90.59:4200",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -122,7 +122,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("192.168.90.70", 6379)],
         },
     },
 }
@@ -149,7 +149,7 @@ DATABASES = {
         'NAME': 'superprod',
         'USER': 'admin',
         'PASSWORD': 'admin',
-        'HOST': '192.168.90.48',
+        'HOST': '192.168.90.59',
         'PORT': '3306',
     }
 }

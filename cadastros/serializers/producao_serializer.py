@@ -24,7 +24,7 @@ class ProducaoSerializer(LogCadastroMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Producao
-        fields = ['id', 'data', 'horainicial', 'horafinal', 'operador', 'embalador', 'produto', 'maquina', 'quantidade', 'atributo', 'perda', 'motivoperda', 'ciclo', 'lote', 'observacao', 'status', 'usuariogravacao', 'datagravacao']
+        fields = ['id', 'data', 'horainicial', 'horafinal', 'operador', 'embalador', 'produto', 'maquina', 'quantidade', 'atributo', 'perda', 'motivoperda', 'trocacor', 'ciclo', 'lote', 'observacao', 'status', 'usuariogravacao', 'datagravacao']
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -45,6 +45,7 @@ class ProducaoSerializer(LogCadastroMixin, serializers.ModelSerializer):
         horafinal = self.context['request'].data.get('horafinal')
         perda = self.context['request'].data.get('perda')
         motivoperda = self.context['request'].data.get('motivoperda')
+        trocacor = self.context['request'].data.get('trocacor')
         ciclo = self.context['request'].data.get('ciclo')
         lote = self.context['request'].data.get('lote')
         observacao = self.context['request'].data.get('observacao')
@@ -64,6 +65,7 @@ class ProducaoSerializer(LogCadastroMixin, serializers.ModelSerializer):
             horafinal = horafinal,
             perda = perda,
             motivoperda = motivoperda,
+            trocacor=trocacor,
             ciclo = ciclo,
             lote = lote,
             observacao = observacao,
@@ -96,6 +98,7 @@ class ProducaoSerializer(LogCadastroMixin, serializers.ModelSerializer):
         horafinal = self.context['request'].data.get('horafinal', instance.horafinal)
         perda = self.context['request'].data.get('perda', instance.perda)
         motivoperda = self.context['request'].data.get('motivoperda', instance.motivoperda)
+        trocacor = self.context['request'].data.get('trocacor', instance.trocacor)
         ciclo = self.context['request'].data.get('ciclo', instance.ciclo)
         lote = self.context['request'].data.get('lote', instance.lote)
         observacao = self.context['request'].data.get('observacao', instance.observacao)
@@ -114,6 +117,7 @@ class ProducaoSerializer(LogCadastroMixin, serializers.ModelSerializer):
         instance.horafinal = horafinal
         instance.perda = perda
         instance.motivoperda = motivoperda
+        instance.trocacor = trocacor
         instance.ciclo = ciclo
         instance.lote = lote
         instance.observacao = observacao

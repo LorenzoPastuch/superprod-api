@@ -12,6 +12,7 @@ class Producao(models.Model):
     atributo = models.ForeignKey('Atributo', on_delete=models.CASCADE)
     perda = models.FloatField(null=True)
     motivoperda = models.CharField(max_length=100, blank=True, null=True)
+    trocacor = models.FloatField(null=True)
     ciclo = models.FloatField(null=True)
     lote = models.CharField(max_length=100, blank=True, null=True)
     observacao = models.TextField(blank=True, null=True)
