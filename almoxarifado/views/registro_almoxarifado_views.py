@@ -6,7 +6,7 @@ from almoxarifado.serializers.registro_almoxarifado_serializer import RegistroAl
 from cadastros.models.usuario import Perfil
 
 class RegistrosAlmoxarifadoViewset(viewsets.ModelViewSet):
-    queryset = RegistroAlmoxarifado.objects.all()
+    queryset = RegistroAlmoxarifado.objects.all().order_by('-datagravacao')
     serializer_class = RegistroAlmoxarifadoSerializer
 
     def get_serializer_context(self):
@@ -18,7 +18,7 @@ class RegistrosAlmoxarifadoViewset(viewsets.ModelViewSet):
         perfil = Perfil.objects.get(usuario=user)
         empresa_ativa = perfil.empresaativa
 
-        registros_exportados = RegistroAlmoxarifado.objects.filter(statuswms=True, empresa=empresa_ativa)
+        registros_exportados = RegistroAlmoxarifado.objects.filter(statuswms=True, empresa=empresa_ativa).order_by('-datagravacao')
         serializer = RegistroAlmoxarifadoSerializer(registros_exportados, many=True, context={'request': request})
         return Response(serializer.data)
     
@@ -28,6 +28,6 @@ class RegistrosAlmoxarifadoViewset(viewsets.ModelViewSet):
         perfil = Perfil.objects.get(usuario=user)
         empresa_ativa = perfil.empresaativa
 
-        registros_nao_exportados = RegistroAlmoxarifado.objects.filter(statuswms=False, empresa=empresa_ativa)
+        registros_nao_exportados = RegistroAlmoxarifado.objects.filter(statuswms=False, empresa=empresa_ativa).order_by('-datagravacao')
         serializer = RegistroAlmoxarifadoSerializer(registros_nao_exportados, many=True, context={'request': request})
         return Response(serializer.data)
