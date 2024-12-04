@@ -24,3 +24,4 @@ class TrocaMoldePcp(models.Model):
     data_prevista = models.DateTimeField(null=True, blank=True)
     data_realizada = models.DateTimeField(null=True, blank=True)
     observacoes = models.CharField(max_length=100, null=True, blank=True)
+    ordem = models.IntegerField()

@@ -10,6 +10,7 @@ class Producao(models.Model):
     maquina = models.ForeignKey('Maquina', on_delete=models.CASCADE)
     quantidade = models.IntegerField()
     atributo = models.ForeignKey('Atributo', on_delete=models.CASCADE)
+    atributo_2 = models.CharField(max_length=100, blank=True, null=True)
     perda = models.FloatField(null=True)
     motivoperda = models.CharField(max_length=100, blank=True, null=True)
     trocacor = models.FloatField(null=True)

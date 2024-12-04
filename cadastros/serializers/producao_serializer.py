@@ -24,7 +24,7 @@ class ProducaoSerializer(LogCadastroMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Producao
-        fields = ['id', 'data', 'horainicial', 'horafinal', 'operador', 'embalador', 'produto', 'maquina', 'quantidade', 'atributo', 'perda', 'motivoperda', 'trocacor', 'ciclo', 'lote', 'observacao', 'status', 'usuariogravacao', 'datagravacao']
+        fields = ['id', 'data', 'horainicial', 'horafinal', 'operador', 'embalador', 'produto', 'maquina', 'quantidade', 'atributo', 'atributo_2', 'perda', 'motivoperda', 'trocacor', 'ciclo', 'lote', 'observacao', 'status', 'usuariogravacao', 'datagravacao']
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -40,6 +40,7 @@ class ProducaoSerializer(LogCadastroMixin, serializers.ModelSerializer):
         produto = self.context['request'].data.get('produto', {})
         maquina = self.context['request'].data.get('maquina', {})
         atributo = self.context['request'].data.get('atributo', {})
+        atributo_2 = self.context['request'].data.get('atributo_2')
         quantidade = self.context['request'].data.get('quantidade')
         horainicial = self.context['request'].data.get('horainicial')
         horafinal = self.context['request'].data.get('horafinal')
@@ -59,6 +60,7 @@ class ProducaoSerializer(LogCadastroMixin, serializers.ModelSerializer):
             produto = Produto.objects.get(id=produto['id']),
             maquina = Maquina.objects.get(id=maquina['id']),  
             atributo = Atributo.objects.get(id=atributo['id']),
+            atributo_2 = atributo_2,
             quantidade = quantidade,
             data = data,
             horainicial = horainicial,
@@ -93,6 +95,7 @@ class ProducaoSerializer(LogCadastroMixin, serializers.ModelSerializer):
         produto = self.context['request'].data.get('produto', {}).get('id', instance.produto.id)
         maquina = self.context['request'].data.get('maquina', {}).get('id', instance.maquina.id)
         atributo = self.context['request'].data.get('atributo', {}).get('id', instance.atributo.id)
+        atributo_2 = self.context['request'].data.get('atributo_2', instance.atributo_2)
         quantidade = self.context['request'].data.get('quantidade', instance.quantidade)
         horainicial = self.context['request'].data.get('horainicial', instance.horainicial)
         horafinal = self.context['request'].data.get('horafinal', instance.horafinal)
@@ -111,6 +114,7 @@ class ProducaoSerializer(LogCadastroMixin, serializers.ModelSerializer):
         instance.produto = Produto.objects.get(id=produto)
         instance.maquina = Maquina.objects.get(id=maquina)
         instance.atributo = Atributo.objects.get(id=atributo)
+        instance.atributo_2 = atributo_2
         instance.quantidade = quantidade
         instance.data = data
         instance.horainicial = horainicial

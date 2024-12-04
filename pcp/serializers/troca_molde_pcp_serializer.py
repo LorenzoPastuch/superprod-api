@@ -12,7 +12,7 @@ class TrocaMoldePcpSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TrocaMoldePcp
-        fields = ['id', 'injetora', 'molde_maquina', 'status_molde', 'proximo_molde', 'status_troca', 'data_prevista', 'data_realizada', 'observacoes']
+        fields = ['id', 'injetora', 'molde_maquina', 'status_molde', 'proximo_molde', 'status_troca', 'data_prevista', 'data_realizada', 'observacoes', 'ordem']
 
     def create(self, validate_data):
 
@@ -24,6 +24,8 @@ class TrocaMoldePcpSerializer(serializers.ModelSerializer):
         data_prevista = self.context['request'].data.get('data_prevista')
         data_realizada = self.context['request'].data.get('data_realizada')
         observacoes = self.context['request'].data.get('observacoes')
+        ordem = self.context['request'].data.get('ordem')
+
 
         injetora = Maquina.objects.get(id=injetora)
         molde_maquina = Molde.objects.get(id=molde_maquina)
@@ -37,7 +39,8 @@ class TrocaMoldePcpSerializer(serializers.ModelSerializer):
             status_troca=status_troca,
             data_prevista=data_prevista,
             data_realizada=data_realizada,
-            observacoes=observacoes
+            observacoes=observacoes,
+            ordem=ordem
         )
         return trocamolde
     
@@ -51,6 +54,8 @@ class TrocaMoldePcpSerializer(serializers.ModelSerializer):
         data_prevista = self.context['request'].data.get('data_prevista', instance.data_prevista)
         data_realizada = self.context['request'].data.get('data_realizada', instance.data_realizada)
         observacoes = self.context['request'].data.get('observacoes', instance.observacoes)
+        ordem = self.context['request'].data.get('ordem', instance.ordem)
+
 
         injetora = Maquina.objects.get(id=injetora)
         molde_maquina = Molde.objects.get(id=molde_maquina)
@@ -64,6 +69,7 @@ class TrocaMoldePcpSerializer(serializers.ModelSerializer):
         instance.data_prevista = data_prevista
         instance.data_realizada = data_realizada
         instance.observacoes = observacoes
+        instance.ordem = ordem
         instance.save()
 
         return instance
