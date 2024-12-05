@@ -57,10 +57,20 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
             unidades=Decimal(kilogramas)/(produto.peso+(molde.pesogalho/cavidades))
 
         if(horainicial):
+            horainicial = datetime.strptime(horainicial, "%Y-%m-%dT%H:%M:%S.%fZ")
             horas_necessarias = float(unidades*ciclo/(3600*cavidades))
             horafinal = self.calcular_data_final(horainicial, horas_necessarias)
         else:
-            horafinal = None 
+            try:
+                horainicial = ProducaoPcp.objects.filter(maquina=maquina, ordem=(ordem-1)).first().horafinal + timedelta(minutes=20)
+            except:
+                horainicial = None
+
+            if(horainicial):
+                horas_necessarias = float(unidades*ciclo/(3600*cavidades))
+                horafinal = self.calcular_data_final(horainicial, horas_necessarias)
+            else:
+                horafinal = None
             
         caixas = math.ceil(unidades/produto.uncaixa)
         embalagens = math.ceil(unidades/produto.unembalagem)
@@ -135,10 +145,20 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
             unidades=Decimal(kilogramas)/(produto.peso + (molde.pesogalho/cavidades))
 
         if(horainicial):
+            horainicial = datetime.strptime(horainicial, "%Y-%m-%dT%H:%M:%S.%fZ")
             horas_necessarias = float(unidades*ciclo/(3600*cavidades))
             horafinal = self.calcular_data_final(horainicial, horas_necessarias)
         else:
-            horafinal = None 
+            try:
+                horainicial = ProducaoPcp.objects.filter(maquina=maquina, ordem=(ordem-1)).first().horafinal + timedelta(minutes=20) # tempo para troca de cor
+            except:
+                horainicial = None
+                
+            if(horainicial):
+                horas_necessarias = float(unidades*ciclo/(3600*cavidades))
+                horafinal = self.calcular_data_final(horainicial, horas_necessarias)
+            else:
+                horafinal = None
         
         caixas = math.ceil(unidades/produto.uncaixa)
         embalagens = math.ceil(unidades/produto.unembalagem)
@@ -185,7 +205,6 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
     
     def calcular_data_final(self, hora_inicial, horas_necessarias):
         
-        hora_inicial = datetime.strptime(hora_inicial, "%Y-%m-%dT%H:%M:%S.%fZ")
         hora_inicial = hora_inicial - timedelta(hours=3) #soluçao podre pra resolver problema de fuso horario
 
         inicio_dia_util = timedelta(hours=7)
