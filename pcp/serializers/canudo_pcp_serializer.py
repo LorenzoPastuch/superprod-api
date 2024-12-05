@@ -49,10 +49,20 @@ class CanudoPcpSerializer(serializers.ModelSerializer):
             unidades=Decimal(kilogramas)/(produto.peso+(molde.pesogalho/cavidades))
 
         if(horainicial):
+            horainicial = datetime.strptime(horainicial, "%Y-%m-%dT%H:%M:%S.%fZ")
             horas_necessarias = float(unidades*ciclo/(3600*cavidades))
             horafinal = self.calcular_data_final(horainicial, horas_necessarias)
         else:
-            horafinal = None 
+            try:
+                horainicial = CanudoPcp.objects.filter(maquina=maquina, ordem=(ordem-1)).first().horafinal + timedelta(minutes=20) # tempo para troca de cor
+            except:
+                horainicial = None
+                
+            if(horainicial):
+                horas_necessarias = float(unidades*ciclo/(3600*cavidades))
+                horafinal = self.calcular_data_final(horainicial, horas_necessarias)
+            else:
+                horafinal = None
 
         producao_pcp = CanudoPcp.objects.create(
             maquina = MaquinaPcp.objects.get(id=maquina),
@@ -100,10 +110,20 @@ class CanudoPcpSerializer(serializers.ModelSerializer):
             unidades=Decimal(kilogramas)/(produto.peso + (molde.pesogalho/cavidades))
 
         if(horainicial):
+            horainicial = datetime.strptime(horainicial, "%Y-%m-%dT%H:%M:%S.%fZ")
             horas_necessarias = float(unidades*ciclo/(3600*cavidades))
             horafinal = self.calcular_data_final(horainicial, horas_necessarias)
         else:
-            horafinal = None 
+            try:
+                horainicial = CanudoPcp.objects.filter(maquina=maquina, ordem=(ordem-1)).first().horafinal + timedelta(minutes=20) # tempo para troca de cor
+            except:
+                horainicial = None
+                
+            if(horainicial):
+                horas_necessarias = float(unidades*ciclo/(3600*cavidades))
+                horafinal = self.calcular_data_final(horainicial, horas_necessarias)
+            else:
+                horafinal = None
         
         instance.empresa = empresa_ativa
         instance.maquina = MaquinaPcp.objects.get(id=maquina)
@@ -118,6 +138,23 @@ class CanudoPcpSerializer(serializers.ModelSerializer):
         instance.qnt_produzida = qnt_produzida
 
         instance.save()
+        
+         # Atualizar produções dependentes
+        producoes_dependentes = CanudoPcp.objects.filter(
+            maquina=instance.maquina, ordem__gt=instance.ordem
+        ).order_by("ordem")
+
+        producao_anterior = instance
+        for producao in producoes_dependentes:
+            producao.horainicial = producao_anterior.horafinal + timedelta(minutes=20)
+            horas_necessarias = float(
+                producao.unidades * ciclo / (3600 * cavidades)
+            )
+            producao.horafinal = self.calcular_data_final(
+                producao.horainicial, horas_necessarias
+            )
+            producao.save()
+            producao_anterior = producao
 
         return instance
  
@@ -126,7 +163,6 @@ class CanudoPcpSerializer(serializers.ModelSerializer):
     
     def calcular_data_final(self, hora_inicial, horas_necessarias):
         
-        hora_inicial = datetime.strptime(hora_inicial, "%Y-%m-%dT%H:%M:%S.%fZ")
         hora_inicial = hora_inicial - timedelta(hours=3) #soluçao podre pra resolver problema de fuso horario
 
         inicio_dia_util = timedelta(hours=7)

@@ -190,6 +190,23 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
 
         instance.save()
 
+         # Atualizar produções dependentes
+        producoes_dependentes = ProducaoPcp.objects.filter(
+            maquina=instance.maquina, ordem__gt=instance.ordem
+        ).order_by("ordem")
+
+        producao_anterior = instance
+        for producao in producoes_dependentes:
+            producao.horainicial = producao_anterior.horafinal + timedelta(minutes=20)
+            horas_necessarias = float(
+                producao.unidades * ciclo / (3600 * cavidades)
+            )
+            producao.horafinal = self.calcular_data_final(
+                producao.horainicial, horas_necessarias
+            )
+            producao.save()
+            producao_anterior = producao
+
         insumo = InsumosPcp.objects.get(producao=instance)
         insumo.caixas = caixas
         insumo.pigmento = pigmento
