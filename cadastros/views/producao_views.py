@@ -6,7 +6,7 @@ from cadastros.serializers.producao_serializer import ProducaoSerializer
 from cadastros.models.usuario import Perfil
 
 class ProducaoViewSet(viewsets.ModelViewSet):
-    queryset = Producao.objects.all()
+    queryset = Producao.objects.all().order_by('-data')
     serializer_class = ProducaoSerializer
 
     def get_serializer_context(self):
@@ -18,7 +18,7 @@ class ProducaoViewSet(viewsets.ModelViewSet):
         perfil = Perfil.objects.get(usuario=user)
         empresa_ativa = perfil.empresaativa
 
-        producoes_ativas = Producao.objects.filter(status=True, empresa=empresa_ativa)
+        producoes_ativas = Producao.objects.filter(status=True, empresa=empresa_ativa).order_by('-data')
         serializer = ProducaoSerializer(producoes_ativas, many=True, context={'request': request})
         return Response(serializer.data)
     
@@ -28,6 +28,6 @@ class ProducaoViewSet(viewsets.ModelViewSet):
         perfil = Perfil.objects.get(usuario=user)
         empresa_ativa = perfil.empresaativa
 
-        producoes_inativas = Producao.objects.filter(status=False, empresa=empresa_ativa)
+        producoes_inativas = Producao.objects.filter(status=False, empresa=empresa_ativa).order_by('-data')
         serializer = ProducaoSerializer(producoes_inativas, many=True, context={'request': request})
         return Response(serializer.data)
