@@ -137,19 +137,35 @@ class ProducaoSerializer(LogCadastroMixin, serializers.ModelSerializer):
         return instance
 
     def get_operador(self, obj):
-        return ColaboradorSerializer(obj.operador).data
+        return {
+            "id": obj.operador.id,
+            "nome": obj.operador.nome  
+        }
     
     def get_embalador(self, obj):
-        return ColaboradorSerializer(obj.embalador).data
+         return {
+            "id": obj.embalador.id,
+            "nome": obj.embalador.nome
+        }
     
     def get_produto(self, obj):
-        return ProdutoSerializer(obj.produto).data
+        return {
+            "id": obj.produto.id,
+            "nome": obj.produto.nome 
+        }
     
     def get_maquina(self, obj):
-        return MaquinaSerializer(obj.maquina).data
+        return {
+            "id": obj.maquina.id,
+            "nome": obj.maquina.nome,
+            "numero": obj.maquina.numero 
+        }
     
     def get_atributo(self, obj):
-        return AtributoSerializer(obj.atributo).data
+        return {
+            "id": obj.atributo.id,
+            "nome": obj.atributo.nome  
+        }
     
     def get_usuariogravacao(self, obj):
         # Busca o log mais recente relacionado ao atributo
