@@ -8,6 +8,7 @@ from pcp.models.embaladores_pcp import EmbaladoresPcp
 class EmbaladoresPcpViewSet(viewsets.ModelViewSet):
     queryset = EmbaladoresPcp.objects.all()
     serializer_class = EmbaladoresPcpSerializer
+    pagination_class = None
 
     def get_serializer_context(self):
         return {'request': self.request}

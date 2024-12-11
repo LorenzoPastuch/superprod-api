@@ -1,5 +1,4 @@
 from rest_framework import viewsets
-from rest_framework.decorators import action
 from pcp.models.producao_pcp import ProducaoPcp
 from rest_framework.response import Response
 from cadastros.models.usuario import Perfil

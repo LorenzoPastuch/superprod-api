@@ -6,6 +6,7 @@ from pcp.serializers.troca_molde_pcp_serializer import TrocaMoldePcpSerializer
 class TrocaMoldePcpViewSet(viewsets.ModelViewSet):
     queryset = TrocaMoldePcp.objects.all().order_by('ordem')
     serializer_class = TrocaMoldePcpSerializer
+    pagination_class = None
 
     def get_serializer_context(self):
         return {'request': self.request}
