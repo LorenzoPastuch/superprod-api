@@ -86,7 +86,7 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         # qnt_material = unidades*produto.peso
 
         producao_pcp = ProducaoPcp.objects.create(
-            maquina = MaquinaPcp.objects.get(id=maquina),
+            maquina = MaquinaPcp.objects.get(maquina=maquina),
             atributo = atributo,
             arte=arte,
             pedido=pedido,
@@ -174,7 +174,7 @@ class ProducaoPcpSerializer(serializers.ModelSerializer):
         qnt_material = unidades*produto.peso
 
         instance.empresa = empresa_ativa
-        instance.maquina = MaquinaPcp.objects.get(id=maquina)
+        instance.maquina = MaquinaPcp.objects.get(maquina=maquina)
         instance.atributo = atributo
         instance.arte = arte
         instance.pedido = pedido

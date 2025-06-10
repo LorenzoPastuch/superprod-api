@@ -65,7 +65,7 @@ class CanudoPcpSerializer(serializers.ModelSerializer):
                 horafinal = None
 
         producao_pcp = CanudoPcp.objects.create(
-            maquina = MaquinaPcp.objects.get(id=maquina),
+            maquina = MaquinaPcp.objects.get(maquina=maquina),
             atributo = atributo,
             tamanho=tamanho,
             unidades = unidades,
@@ -126,7 +126,7 @@ class CanudoPcpSerializer(serializers.ModelSerializer):
                 horafinal = None
         
         instance.empresa = empresa_ativa
-        instance.maquina = MaquinaPcp.objects.get(id=maquina)
+        instance.maquina = MaquinaPcp.objects.get(maquina=maquina)
         instance.atributo = atributo
         instance.tamanho = tamanho
         instance.unidades = unidades

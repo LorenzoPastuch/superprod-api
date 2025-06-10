@@ -60,7 +60,7 @@ class SoldaPcpSerializer(serializers.ModelSerializer):
                 horafinal = None
             
         producao_solda = SoldaPcp.objects.create(
-            maquina = MaquinaPcp.objects.get(id=maquina),
+            maquina = MaquinaPcp.objects.get(maquina=maquina),
             cor_1 = cor_1,
             cor_2 = cor_2,
             quantidade = quantidade, 
@@ -113,7 +113,7 @@ class SoldaPcpSerializer(serializers.ModelSerializer):
                 horafinal = None
         
         instance.empresa = empresa_ativa
-        instance.maquina = MaquinaPcp.objects.get(id=maquina)
+        instance.maquina = MaquinaPcp.objects.get(maquina=maquina)
         instance.cor_1 = Atributo.objects.get(id=cor_1)
         instance.cor_2 = Atributo.objects.get(id=cor_2)
         instance.quantidade = quantidade

@@ -21,7 +21,7 @@ class MaquinaPcpSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MaquinaPcp
-        fields = ['id', 'atributo', 'arte', 'cor_1', 'cor_2', 'produto', 'status', 'prioridade', 'maquina']
+        fields = ['atributo', 'arte', 'cor_1', 'cor_2', 'produto', 'status', 'prioridade', 'maquina']
 
     def update(self, instance, validated_data):
         request = self.context.get('request')

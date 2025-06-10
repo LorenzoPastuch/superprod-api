@@ -25,7 +25,7 @@ class EmbaladoresPcpSerializer(serializers.ModelSerializer):
         setor = self.context['request'].data.get('setor', instance.setor)
 
         instance.embalador = Colaborador.objects.get(id=embalador)
-        instance.maquina = MaquinaPcp.objects.get(id=maquina)
+        instance.maquina = MaquinaPcp.objects.get(maquina=maquina)
         instance.setor = setor
 
         instance.save()
