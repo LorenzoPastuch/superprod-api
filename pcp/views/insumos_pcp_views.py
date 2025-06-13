@@ -18,7 +18,7 @@ class InsumosPcpViewSet(viewsets.ViewSet):
         insumos = InsumosPcp.objects.filter(
             producao_id__in=producoes
         ).values(
-            'producao__maquina__id', 
+            'producao__maquina', 
             'producao__maquina__produto__nome', 
             'producao__maquina__produto__material',
             'producao__maquina__produto__embalagem'
@@ -26,7 +26,7 @@ class InsumosPcpViewSet(viewsets.ViewSet):
             total_caixas=Sum('caixas'),
             total_qnt_material=Sum('qnt_material'),
             total_embalagens=Sum('embalagem')
-        ).order_by('producao__maquina__id')
+        ).order_by('producao__maquina')
 
         resultados = []
         
@@ -34,7 +34,7 @@ class InsumosPcpViewSet(viewsets.ViewSet):
         maquinas_resultados = {}
 
         for insumo in insumos:
-            maquina_id = insumo['producao__maquina__id']
+            maquina_id = insumo['producao__maquina']
             
             # Se a máquina não estiver no dicionário, inicializa
             if maquina_id not in maquinas_resultados:
@@ -52,7 +52,7 @@ class InsumosPcpViewSet(viewsets.ViewSet):
             # Filtra pigmentos para a máquina atual
             pigmentos = InsumosPcp.objects.filter(
                 producao__id__in=producoes,
-                producao__maquina__id=maquina_id
+                producao__maquina=maquina_id
             ).values(
                 'pigmento',
                 'producao__atributo__nome'
